@@ -28,20 +28,29 @@ SOFTWARE.
 #include <memory>
 #include <vector>
 
+#include "fwd_decl.h"
+
 namespace irm {
+
+
+   /** StateVariable
+   * Represents the StateVariable at a particular index in a State.
+   */
+    struct StateVariable {
+        explicit StateVariable(int i): index(i) {}
+        StateVariable(const StateVariable & that) = default;
+        StateVariable & operator = (const StateVariable & that) = default;
+        int index;
+    };
 
     class IState {
     public:
-
-        typedef std::shared_ptr<IState> CPtr;
-
         virtual int getNumValues() const = 0;
+        virtual double getValue(StateVariable x) const = 0;
+        virtual void setValue(StateVariable x, double value) = 0;
 
-        virtual double getValueAtIndex(int index) const = 0;
-
-        virtual void setValueAtIndex(int index, double value) = 0;
-
-        static CPtr createFromDoubleVector(std::vector<double> data);
+        static IStatePtr createZeroState(int stateSize);
+        static IStatePtr createFromVector(std::vector<double> value);
     };
 
 } // end namespace irm

@@ -23,26 +23,36 @@ SOFTWARE.
 */
 
 
-#ifndef INTEREST_RATE_MODELLING_TIME_H
-#define INTEREST_RATE_MODELLING_TIME_H
+#ifndef INTEREST_RATE_MODELLING_FWD_DECL_H
+#define INTEREST_RATE_MODELLING_FWD_DECL_H
 
-#include <vector>
-
-#include "fwd_decl.h"
+#include <memory>
 
 namespace irm {
 
-    class ITimeVector {
-    public:
-        virtual int getNumTimes() const = 0;
-        virtual Time getTimeAtIndex(int ti) const = 0;
-        virtual void setTimeAtIndex(int ti, Time t) = 0;
+    // path.h
+    class IPath;
+    typedef std::shared_ptr<const IPath> IPathCPtr;
+    typedef std::shared_ptr<IPath> IPathPtr;
 
-        static ITimeVectorPtr createFromVector(std::vector<Time> t);
-        static ITimeVectorPtr createUniform(Time start, Time dt, int numTimes);
-    };
+    // state.h
+    class StateVariable;
+    class IState;
+    typedef std::shared_ptr<const IState> IStateCPtr;
+    typedef std::shared_ptr<IState> IStatePtr;
+
+    // time.h
+    typedef double Time;
+    class ITimeVector;
+    typedef std::shared_ptr<const ITimeVector> ITimeVectorCPtr;
+    typedef std::shared_ptr<ITimeVector> ITimeVectorPtr;
+
+    // wiener_process.h
+    class WienerProcess;
+    typedef std::shared_ptr<const WienerProcess> WienerProcessCPtr;
+    typedef std::shared_ptr<WienerProcess> WienerProcessPtr;
 
 } // end namespace irm
 
 
-#endif //INTEREST_RATE_MODELLING_TIME_H
+#endif //INTEREST_RATE_MODELLING_FWD_DECL_H

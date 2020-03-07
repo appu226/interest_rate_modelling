@@ -22,27 +22,31 @@ SOFTWARE.
 
 */
 
+#ifndef INTEREST_RATE_MODELLING_WIENER_PROCESS_TEMPLATE_DEFN_H
+#define INTEREST_RATE_MODELLING_WIENER_PROCESS_TEMPLATE_DEFN_H
 
-#ifndef INTEREST_RATE_MODELLING_TIME_H
-#define INTEREST_RATE_MODELLING_TIME_H
+#include "wiener_process.h"
 
-#include <vector>
+#include <random>
 
-#include "fwd_decl.h"
+
 
 namespace irm {
 
-    class ITimeVector {
-    public:
-        virtual int getNumTimes() const = 0;
-        virtual Time getTimeAtIndex(int ti) const = 0;
-        virtual void setTimeAtIndex(int ti, Time t) = 0;
 
-        static ITimeVectorPtr createFromVector(std::vector<Time> t);
-        static ITimeVectorPtr createUniform(Time start, Time dt, int numTimes);
-    };
+    template<typename RandomNumberGenerator>
+    IPathCPtr WienerProcess::generatePath(RandomNumberGenerator & rng) const
+    {
+        std::normal_distribution nd;
+        std::vector<double> brownianSample;
+        int numBrownianSamples = getRequiredNumberOfSamples();
+        brownianSample.reserve(numBrownianSamples);
+        for (int i = 0; i < numBrownianSamples; ++i)
+            brownianSample.push_back(nd(rng));
+        return generatePath(std::move(brownianSample));
+    }
+
 
 } // end namespace irm
 
-
-#endif //INTEREST_RATE_MODELLING_TIME_H
+#endif //INTEREST_RATE_MODELLING_WIENER_PROCESS_TEMPLATE_DEFN_H

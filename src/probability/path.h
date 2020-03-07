@@ -22,27 +22,25 @@ SOFTWARE.
 
 */
 
-
-#ifndef INTEREST_RATE_MODELLING_TIME_H
-#define INTEREST_RATE_MODELLING_TIME_H
-
-#include <vector>
+#ifndef INTEREST_RATE_MODELLING_PATH_H
+#define INTEREST_RATE_MODELLING_PATH_H
 
 #include "fwd_decl.h"
 
 namespace irm {
 
-    class ITimeVector {
+    class IPath {
     public:
-        virtual int getNumTimes() const = 0;
-        virtual Time getTimeAtIndex(int ti) const = 0;
-        virtual void setTimeAtIndex(int ti, Time t) = 0;
 
-        static ITimeVectorPtr createFromVector(std::vector<Time> t);
-        static ITimeVectorPtr createUniform(Time start, Time dt, int numTimes);
-    };
+        virtual int getNumTimes() const = 0;
+        virtual int getStateSize() const = 0;
+        virtual Time getTimeAtIndex(int timeIndex) const = 0;
+        virtual const IState & getStateAtIndex(int timeIndex) const = 0;
+        virtual IState & getStateAtIndex(int timeIndex) = 0;
+
+        static IPathPtr createZeroPath(ITimeVectorCPtr timeVector, int stateSize);
+    }; // end class IPath
 
 } // end namespace irm
 
-
-#endif //INTEREST_RATE_MODELLING_TIME_H
+#endif //INTEREST_RATE_MODELLING_PATH_H

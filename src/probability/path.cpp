@@ -22,53 +22,66 @@ SOFTWARE.
 
 */
 
+#include "path.h"
 
 #include "time.h"
+#include "state.h"
+
 
 namespace {
 
     using namespace irm;
 
-    class TimeVectorFromVector : public ITimeVector {
-    public :
+    class PathFromStateVector : public IPath {
+    public:
+
+        PathFromStateVector(
+                ITimeVectorCPtr timeVector,
+                int stateSize,
+                std::vector<IStatePtr> stateVector) :
+                m_timeVector(timeVector),
+                m_stateSize(stateSize),
+                m_stateVector(std::move(stateVector))
+        { }
+
         int getNumTimes() const override {
-            return m_timePoints.size();
+            return m_timeVector->getNumTimes();
+        }
+
+        int getStateSize() const override {
+            return m_stateSize;
         }
 
         Time getTimeAtIndex(int timeIndex) const override {
-            return m_timePoints.at(timeIndex);
+            return m_timeVector->getTimeAtIndex(timeIndex);
         }
 
-        void setTimeAtIndex(int timeIndex, Time t) override {
-            m_timePoints[timeIndex] = t;
+        const IState & getStateAtIndex(int timeIndex) const override {
+            return *m_stateVector.at(timeIndex);
         }
 
-        TimeVectorFromVector(std::vector<double> timeVector) :
-          m_timePoints(std::move(timeVector))
-        { }
+        IState & getStateAtIndex(int timeIndex) override {
+            return *m_stateVector.at(timeIndex);
+        }
 
     private:
-        std::vector<Time> m_timePoints;
-    };
+        ITimeVectorCPtr m_timeVector;
+        int m_stateSize;
+        std::vector<IStatePtr> m_stateVector;
+    }; // end class PathVectorImpl
 
 } // end anonymous namespace
 
 
 namespace irm {
 
-    ITimeVectorPtr ITimeVector::createFromVector(std::vector<Time> t)
-    {
-        return std::make_shared<TimeVectorFromVector>(std::move(t));
-    }
-
-    ITimeVectorPtr ITimeVector::createUniform(Time start, Time dt, int numTimes)
-    {
-        std::vector<Time> tv;
-        tv.reserve(numTimes);
+    IPathPtr IPath::createZeroPath(ITimeVectorCPtr timeVector, int stateSize) {
+        int numTimes = timeVector->getNumTimes();
+        std::vector<IStatePtr> stateVector;
+        stateVector.reserve(numTimes);
         for (int i = 0; i < numTimes; ++i)
-            tv.push_back(start + dt * i);
-        return std::make_shared<TimeVectorFromVector>(std::move(tv));
+            stateVector.push_back(IState::createZeroState(stateSize));
+        return std::make_shared<PathFromStateVector>(timeVector, stateSize, stateVector);
     }
-
 
 } // end namespace irm

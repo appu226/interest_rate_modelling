@@ -22,40 +22,43 @@ SOFTWARE.
 
 */
 
+
 #include "state.h"
 
 namespace {
 
-    class DoubleVectorState : public irm::IState {
+    using namespace irm;
+
+    class StateFromVector: public IState {
     public:
-        DoubleVectorState(std::vector<double> data)
-                : m_data(std::move(data)) {}
+        StateFromVector(std::vector<double> values) :
+          m_values(std::move(values))
+        { }
 
         int getNumValues() const override {
-            return m_data.size();
+            return m_values.size();
         }
 
-        double getValueAtIndex(int i) const override {
-            return m_data[i];
+        double getValue(StateVariable x) const override {
+            return m_values[x.index];
         }
 
-        void setValueAtIndex(int i, double d) override {
-            m_data[i] = d;
+        void setValue(StateVariable x, double value) override {
+            m_values[x.index] = value;
         }
 
     private:
-        std::vector<double> m_data;
-    };
-
+        std::vector<double> m_values;
+    }; // end class StateFromVector
 
 } // end anonymous namespace
 
-
 namespace irm {
-
-    IState::CPtr IState::createFromDoubleVector(std::vector<double> data) {
-        return std::make_shared<DoubleVectorState>(std::move(data));
+    IStatePtr IState::createZeroState(int stateSize){
+        return std::make_shared<StateFromVector>(std::vector(stateSize, 0.0));
     }
 
+    IStatePtr IState::createFromVector(std::vector<double> value) {
+        return std::make_shared<StateFromVector>(std::move(value));
+    }
 } // end namespace irm
-
