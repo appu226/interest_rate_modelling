@@ -142,8 +142,8 @@ void testWienerProcess() {
     using namespace irm;
     const double w0 = 0;
     const Time t0 = 0;
-    const Time dT = 1e-3;
-    const int numTimes = 1e3;
+    const Time dT = 1e-5;
+    const int numTimes = 1e5;
     WienerProcess process(ITimeVector::createUniform(t0, dT, numTimes), w0);
     StateVariable W(0);
 
@@ -173,19 +173,12 @@ void testWienerProcess() {
 
 
     // generate paths and compute avg values of f1 and f2
-    const int numPaths = 1e2;
-    int seed;
     std::default_random_engine dre(1984);
-    double f3Sum = 0;
-    for (int ipath = 0; ipath < numPaths; ++ipath) {
-        auto path = process.generatePath(dre);
-        const IState & finalState = path->getStateAtIndex(numTimes - 1);
-        double f3Val = finalState.getValue(f3);
-        f3Sum += f3Val;
-        // info(f3Val);
-    }
-    double f3Avg = f3Sum / numPaths;
-    // info("f3Avg = " << f3Avg);
-    assert(std::abs(f3Avg) < 1e-1);
+    auto path = process.generatePath(dre);
+    const IState & finalState = path->getStateAtIndex(numTimes - 1);
+    double f3Val = finalState.getValue(f3);
+    info(f3Val);
+
+    assert(std::abs(f3Val) < 1e-2);
 
 } // end function testWienerProcess
