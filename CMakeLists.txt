@@ -18,6 +18,6 @@ target_link_libraries(test_probability probability ${COVERAGE_LINK_FLAG})
 target_include_directories(test_probability PRIVATE src)
 
 
-add_executable(experimental src/experimental/main.cpp)
+add_executable(experimental src/experimental/main.cpp src/experimental/experiment.h src/experimental/experiment.cpp src/experimental/simple_plot.h)
 target_link_libraries(experimental Python2::Python)
 target_include_directories(experimental PRIVATE ${Python2_INCLUDE_DIRS} matplotlibcpp)
