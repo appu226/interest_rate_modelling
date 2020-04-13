@@ -81,7 +81,7 @@ namespace irm {
         // set initial state
         int stateSize = m_initialValue.size();
         for (int i = 0; i < stateSize; ++i)
-            path->getStateAtIndex(i).setValue(StateVariable(i), m_initialValue[i]);
+            path->getStateAtIndex(0).setValue(StateVariable(i), m_initialValue[i]);
 
 
         // loop over time incrementally to generate the rest of the path
